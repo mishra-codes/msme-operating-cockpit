@@ -12,7 +12,18 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app.db.database import Base 
 
-import app.models.user  # Import your models here
+import app.models.user
+import app.models.supplier
+import app.models.product
+import app.models.customer
+import app.models.purchase
+import app.models.purchase_item
+import app.models.sale
+import app.models.sale_item
+import app.models.credit_ledger
+import app.models.cash_transactions
+import app.models.stock_alert
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

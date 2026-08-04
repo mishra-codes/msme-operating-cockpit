@@ -1,6 +1,6 @@
 from sqlalchemy import String
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
 
@@ -24,3 +24,7 @@ class User(TimestampMixin, Base):
         String(20),
         default="owner"
     )
+
+    purchases = relationship("Purchase")
+
+    sales = relationship("Sale")
