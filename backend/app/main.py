@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.api.user import router as user_router
 from app.api.product import router as product_router
+from app.api.supplier import router as supplier_router
 
 app = FastAPI(
     title="MSME Operating Cockpit API",
@@ -9,7 +10,7 @@ app = FastAPI(
 
 app.include_router(user_router)
 app.include_router(product_router)
-
+app.include_router(supplier_router)
 
 @app.get("/health", tags=["Health"])
 def health_check():

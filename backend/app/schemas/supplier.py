@@ -1,37 +1,25 @@
-from decimal import Decimal
-
 from pydantic import BaseModel, ConfigDict
 
 
-class ProductBase(BaseModel):
-    sku: str
+class SupplierBase(BaseModel):
     name: str
-    category: str | None = None
-    unit: str = "pcs"
-    cost_price: Decimal
-    sell_price: Decimal
-    current_stock: Decimal = Decimal("0.00")
-    reorder_point: Decimal = Decimal("0.00")
-    supplier_id: int | None = None
+    contact_phone: str | None = None
+    contact_email: str | None = None
+    address: str | None = None
 
 
-class ProductCreate(ProductBase):
+class SupplierCreate(SupplierBase):
     pass
 
 
-class ProductUpdate(BaseModel):
-    sku: str | None = None
+class SupplierUpdate(BaseModel):
     name: str | None = None
-    category: str | None = None
-    unit: str | None = None
-    cost_price: Decimal | None = None
-    sell_price: Decimal | None = None
-    current_stock: Decimal | None = None
-    reorder_point: Decimal | None = None
-    supplier_id: int | None = None
+    contact_phone: str | None = None
+    contact_email: str | None = None
+    address: str | None = None
 
 
-class ProductResponse(ProductBase):
+class SupplierResponse(SupplierBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
