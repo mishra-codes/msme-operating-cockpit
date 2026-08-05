@@ -9,10 +9,22 @@ class Customer(TimestampMixin, Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    name: Mapped[str] = mapped_column(String(150))
+    name: Mapped[str] = mapped_column(
+        String(150)
+    )
 
-    phone: Mapped[str | None] = mapped_column(
+    phone: Mapped[str] = mapped_column(
         String(20),
+        unique=True,
+    )
+
+    email: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    address: Mapped[str | None] = mapped_column(
+        String(500),
         nullable=True,
     )
 
