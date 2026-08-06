@@ -24,7 +24,7 @@ class SaleItemResponse(SaleItemBase):
 class SaleBase(BaseModel):
     customer_id: int | None = None
     payment_mode: str = "cash"
-
+    created_by: int
 
 class SaleCreate(SaleBase):
     items: list[SaleItemCreate]
@@ -34,7 +34,6 @@ class SaleResponse(SaleBase):
     id: int
     sale_date: datetime
     total_amount: Decimal
-    created_by: int
     items: list[SaleItemResponse]
 
     model_config = ConfigDict(from_attributes=True)
