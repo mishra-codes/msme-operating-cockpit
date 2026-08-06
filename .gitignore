@@ -2,12 +2,18 @@
 .venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # Environment
+.env
 backend/.env
 
 # VS Code
 .vscode/
+
+# PyCharm
+.idea/
 
 # Pytest
 .pytest_cache/
@@ -16,5 +22,12 @@ backend/.env
 .coverage
 htmlcov/
 
-# Docker
-.env
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
