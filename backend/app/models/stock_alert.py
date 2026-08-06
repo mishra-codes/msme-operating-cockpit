@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
@@ -17,7 +17,7 @@ class StockAlert(Base):
 
     alert_type: Mapped[str] = mapped_column(
         String(30)
-    )  # low_stock / reorder_predicted
+    )
 
     triggered_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -27,4 +27,9 @@ class StockAlert(Base):
     resolved: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
+    )
+
+    product = relationship(
+        "Product",
+        back_populates="stock_alerts",
     )

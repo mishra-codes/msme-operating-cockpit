@@ -50,3 +50,41 @@ class UserService:
         db.commit()
 
         return user
+
+        @staticmethod
+        def update_user(
+        db: Session,
+        user_id: int,
+        user_data: dict,
+         ):
+           user = db.query(User).filter(User.id == user_id).first()
+
+        if user is None:
+            return None
+
+        for key, value in user_data.items():
+            setattr(user, key, value)
+
+        db.commit()
+        db.refresh(user)
+
+        return user
+
+    @staticmethod
+    def update_user(
+        db: Session,
+        user_id: int,
+        user_data: dict,
+    ):
+        user = db.query(User).filter(User.id == user_id).first()
+
+        if user is None:
+            return None
+
+        for key, value in user_data.items():
+            setattr(user, key, value)
+
+        db.commit()
+        db.refresh(user)
+
+        return user

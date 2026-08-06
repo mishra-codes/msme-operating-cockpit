@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 
 from sqlalchemy import DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,11 +25,11 @@ class CreditLedger(Base):
         String(30)
     )
 
-    amount: Mapped[float] = mapped_column(
+    amount: Mapped[Decimal] = mapped_column(
         Numeric(12, 2)
     )
 
-    balance_after: Mapped[float] = mapped_column(
+    balance_after: Mapped[Decimal] = mapped_column(
         Numeric(12, 2)
     )
 

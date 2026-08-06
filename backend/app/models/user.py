@@ -25,6 +25,12 @@ class User(TimestampMixin, Base):
         default="owner"
     )
 
-    purchases = relationship("Purchase")
+    purchases = relationship(
+        "Purchase",
+        back_populates="created_by_user"
+    )
 
-    sales = relationship("Sale")
+    sales = relationship(
+        "Sale",
+        back_populates="created_by_user"
+    )

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy import ForeignKey, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,15 +19,15 @@ class PurchaseItem(Base):
         ForeignKey("products.id")
     )
 
-    quantity: Mapped[float] = mapped_column(
+    quantity: Mapped[Decimal] = mapped_column(
         Numeric(12, 2)
     )
 
-    unit_cost: Mapped[float] = mapped_column(
+    unit_cost: Mapped[Decimal] = mapped_column(
         Numeric(12, 2)
     )
 
-    line_total: Mapped[float] = mapped_column(
+    line_total: Mapped[Decimal] = mapped_column(
         Numeric(12, 2)
     )
 
@@ -34,4 +36,7 @@ class PurchaseItem(Base):
         back_populates="items",
     )
 
-    product = relationship("Product")
+    product = relationship(
+        "Product",
+        back_populates="purchase_items"
+    )

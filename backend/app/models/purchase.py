@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 
 from sqlalchemy import DateTime, ForeignKey, Numeric, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -20,7 +21,7 @@ class Purchase(Base):
         server_default=func.now(),
     )
 
-    total_amount: Mapped[float] = mapped_column(
+    total_amount: Mapped[Decimal] = mapped_column(
         Numeric(12, 2)
     )
 
@@ -35,6 +36,7 @@ class Purchase(Base):
 
     created_by_user = relationship(
         "User",
+        back_populates="purchases",
     )
 
     items = relationship(

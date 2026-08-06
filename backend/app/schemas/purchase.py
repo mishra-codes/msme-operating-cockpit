@@ -4,33 +4,31 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict
 
 
-class PurchaseItemBase(BaseModel):
+class PurchaseItemCreate(BaseModel):
     product_id: int
     quantity: Decimal
     unit_cost: Decimal
 
 
-class PurchaseItemCreate(PurchaseItemBase):
-    pass
+class PurchaseCreate(BaseModel):
+    supplier_id: int
+    created_by: int
+    items: list[PurchaseItemCreate]
 
 
-class PurchaseItemResponse(PurchaseItemBase):
+class PurchaseItemResponse(BaseModel):
     id: int
+    product_id: int
+    quantity: Decimal
+    unit_cost: Decimal
     line_total: Decimal
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class PurchaseBase(BaseModel):
-    supplier_id: int
-
-
-class PurchaseCreate(PurchaseBase):
-    items: list[PurchaseItemCreate]
-
-
-class PurchaseResponse(PurchaseBase):
+class PurchaseResponse(BaseModel):
     id: int
+    supplier_id: int
     purchase_date: datetime
     total_amount: Decimal
     created_by: int

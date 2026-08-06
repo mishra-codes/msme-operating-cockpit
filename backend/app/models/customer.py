@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy import Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -28,7 +30,7 @@ class Customer(TimestampMixin, Base):
         nullable=True,
     )
 
-    credit_limit: Mapped[float] = mapped_column(
+    credit_limit: Mapped[Decimal] = mapped_column(
         Numeric(12, 2),
         default=0,
     )

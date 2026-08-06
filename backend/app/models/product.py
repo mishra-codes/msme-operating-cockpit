@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy import ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -29,20 +31,20 @@ class Product(TimestampMixin, Base):
         default="pcs",
     )
 
-    cost_price: Mapped[float] = mapped_column(
+    cost_price: Mapped[Decimal] = mapped_column(
         Numeric(12, 2),
     )
 
-    sell_price: Mapped[float] = mapped_column(
+    sell_price: Mapped[Decimal] = mapped_column(
         Numeric(12, 2),
     )
 
-    current_stock: Mapped[float] = mapped_column(
+    current_stock: Mapped[Decimal] = mapped_column(
         Numeric(12, 2),
         default=0,
     )
 
-    reorder_point: Mapped[float] = mapped_column(
+    reorder_point: Mapped[Decimal] = mapped_column(
         Numeric(12, 2),
         default=0,
     )
@@ -59,12 +61,15 @@ class Product(TimestampMixin, Base):
 
     purchase_items = relationship(
         "PurchaseItem",
+        back_populates="product",
     )
 
     sale_items = relationship(
         "SaleItem",
+        back_populates="product",
     )
 
     stock_alerts = relationship(
         "StockAlert",
+        back_populates="product",
     )
