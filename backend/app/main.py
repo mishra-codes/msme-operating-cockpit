@@ -9,6 +9,7 @@ from app.api.cash_transactions import router as cash_transaction_router
 from app.api.credit_ledger import router as credit_ledger_router
 from app.api.stock_alerts import router as stock_alerts_router      
 from app.api.dashboard import router as dashboard_router    
+from app.api.auth import router as auth_router
 
 app = FastAPI(
     title="MSME Operating Cockpit API",
@@ -25,6 +26,8 @@ app.include_router(cash_transaction_router)
 app.include_router(credit_ledger_router)
 app.include_router(stock_alerts_router)
 app.include_router(dashboard_router)
+app.include_router(auth_router)
+
 
 @app.get("/health", tags=["Health"])
 def health_check():

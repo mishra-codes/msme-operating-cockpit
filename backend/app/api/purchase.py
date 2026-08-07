@@ -5,6 +5,10 @@ from app.db.database import get_db
 from app.schemas.purchase import PurchaseCreate, PurchaseResponse
 from app.services.purchase_service import PurchaseService
 
+
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/purchases",
     tags=["Purchases"],
@@ -12,7 +16,10 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[PurchaseResponse])
-def get_purchases(db: Session = Depends(get_db)):
+def get_purchases(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     return PurchaseService.get_all(db)
 
 
@@ -20,6 +27,7 @@ def get_purchases(db: Session = Depends(get_db)):
 def get_purchase(
     purchase_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     purchase = PurchaseService.get_by_id(db, purchase_id)
 
@@ -36,6 +44,7 @@ def get_purchase(
 def create_purchase(
     purchase: PurchaseCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     try:
         return PurchaseService.create(db, purchase)
@@ -51,6 +60,7 @@ def create_purchase(
 def delete_purchase(
     purchase_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     purchase = PurchaseService.get_by_id(db, purchase_id)
 

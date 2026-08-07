@@ -9,6 +9,9 @@ from app.schemas.customer import (
 )
 from app.services.customer_service import CustomerService
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/customers",
     tags=["Customers"],
@@ -16,12 +19,19 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[CustomerResponse])
-def get_customers(db: Session = Depends(get_db)):
+def get_customers(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     return CustomerService.get_all(db)
 
 
 @router.get("/{customer_id}", response_model=CustomerResponse)
-def get_customer(customer_id: int, db: Session = Depends(get_db)):
+def get_customer(
+    customer_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     customer = CustomerService.get_by_id(db, customer_id)
 
     if customer is None:
@@ -37,6 +47,7 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
 def create_customer(
     customer: CustomerCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return CustomerService.create(db, customer)
 
@@ -46,6 +57,7 @@ def update_customer(
     customer_id: int,
     customer: CustomerUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_customer = CustomerService.get_by_id(db, customer_id)
 
@@ -66,6 +78,7 @@ def update_customer(
 def delete_customer(
     customer_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_customer = CustomerService.get_by_id(db, customer_id)
 

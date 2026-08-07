@@ -8,6 +8,9 @@ from app.schemas.stock_alert import (
 )
 from app.services.stock_alert import StockAlertService
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/stock-alerts",
     tags=["Stock Alerts"],
@@ -17,6 +20,7 @@ router = APIRouter(
 @router.get("/", response_model=list[StockAlertResponse])
 def get_alerts(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return StockAlertService.get_all(db)
 
@@ -28,6 +32,7 @@ def get_alerts(
 def get_alert(
     alert_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     alert = StockAlertService.get_by_id(
         db,
@@ -51,6 +56,7 @@ def get_alert(
 def create_alert(
     alert: StockAlertCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     try:
         return StockAlertService.create(
@@ -69,6 +75,7 @@ def create_alert(
 def delete_alert(
     alert_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_alert = StockAlertService.get_by_id(
         db,

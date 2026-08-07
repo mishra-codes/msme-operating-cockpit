@@ -10,6 +10,9 @@ from app.services.credit_ledger import (
     CreditLedgerService,
 )
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/credit-ledger",
     tags=["Credit Ledger"],
@@ -19,6 +22,7 @@ router = APIRouter(
 @router.get("/", response_model=list[CreditLedgerResponse])
 def get_entries(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return CreditLedgerService.get_all(db)
 
@@ -30,6 +34,7 @@ def get_entries(
 def get_entry(
     entry_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     entry = CreditLedgerService.get_by_id(
         db,
@@ -53,6 +58,7 @@ def get_entry(
 def create_entry(
     entry: CreditLedgerCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     try:
         return CreditLedgerService.create(
@@ -71,6 +77,7 @@ def create_entry(
 def delete_entry(
     entry_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user), 
 ):
     db_entry = CreditLedgerService.get_by_id(
         db,

@@ -8,6 +8,9 @@ from app.schemas.sale import (
 )
 from app.services.sale_service import SaleService
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/sales",
     tags=["Sales"],
@@ -15,7 +18,10 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[SaleResponse])
-def get_sales(db: Session = Depends(get_db)):
+def get_sales(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     return SaleService.get_all(db)
 
 
@@ -23,6 +29,7 @@ def get_sales(db: Session = Depends(get_db)):
 def get_sale(
     sale_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     sale = SaleService.get_by_id(
         db,
@@ -42,6 +49,7 @@ def get_sale(
 def create_sale(
     sale: SaleCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     try:
         return SaleService.create(
@@ -60,6 +68,7 @@ def create_sale(
 def delete_sale(
     sale_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_sale = SaleService.get_by_id(
         db,

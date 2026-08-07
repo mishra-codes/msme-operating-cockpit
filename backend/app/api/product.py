@@ -7,6 +7,9 @@ from app.services.product_service import ProductService
 from app.schemas.product import ProductCreate , ProductUpdate , ProductResponse
 from app.schemas.product import ProductResponse , ProductCreate , ProductUpdate
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/products",
     tags=["Products"],
@@ -14,12 +17,17 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[ProductResponse])
-def get_products(db: Session = Depends(get_db)):
+def get_products(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     return ProductService.get_all(db)
 
 
 @router.get("/{product_id}", response_model=ProductResponse)
-def get_product(product_id: int, db: Session = Depends(get_db)):
+def get_product(product_id: int,
+                 db: Session = Depends(get_db),
+                 current_user: User = Depends(get_current_user)):
     product = ProductService.get_by_id(db, product_id)
 
     if product is None:
@@ -34,6 +42,7 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
 def create_product(
     product: ProductCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     # Check duplicate SKU
     if ProductService.get_by_sku(db, product.sku):
@@ -56,6 +65,7 @@ def update_product(
     product_id: int,
     product: ProductUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_product = ProductService.get_by_id(db, product_id)
 
@@ -75,6 +85,7 @@ def update_product(
 def delete_product(
     product_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_product = ProductService.get_by_id(db, product_id)
 

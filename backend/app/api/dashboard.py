@@ -5,6 +5,9 @@ from app.db.database import get_db
 from app.schemas.dashboard import DashboardSummary, RecentSale
 from app.services.dashboard_service import DashboardService
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 from app.schemas.dashboard import (
     RecentPurchase ,
     DashboardSummary , 
@@ -20,12 +23,12 @@ router = APIRouter(
 )
 
 
-@router.get(
-    "/summary",
+@router.get("/summary",
     response_model=DashboardSummary,
 )
 def dashboard_summary(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return DashboardService.get_summary(db)
 
@@ -35,6 +38,7 @@ def dashboard_summary(
 )
 def recent_sales(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return DashboardService.get_recent_sales(db)
 
@@ -45,6 +49,7 @@ def recent_sales(
 )
 def recent_purchases(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return DashboardService.get_recent_purchases(db)
 
@@ -54,6 +59,7 @@ def recent_purchases(
 )
 def low_stock_products(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return DashboardService.get_low_stock_products(db)
 
@@ -64,6 +70,7 @@ def low_stock_products(
 )
 def cash_flow(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return DashboardService.get_cash_flow(db)
 
@@ -73,5 +80,6 @@ def cash_flow(
 )
 def outstanding_credit(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return DashboardService.get_outstanding_credit(db)

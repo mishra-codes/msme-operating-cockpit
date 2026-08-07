@@ -9,6 +9,9 @@ from app.schemas.cash_transaction import (
 
 from app.services.cash_transactions import CashTransactionService
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/cash-transactions",
     tags=["Cash Transactions"],
@@ -18,6 +21,7 @@ router = APIRouter(
 @router.get("/", response_model=list[CashTransactionResponse])
 def get_transactions(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return CashTransactionService.get_all(db)
 
@@ -29,6 +33,7 @@ def get_transactions(
 def get_transaction(
     transaction_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     transaction = CashTransactionService.get_by_id(
         db,
@@ -52,6 +57,7 @@ def get_transaction(
 def create_transaction(
     transaction: CashTransactionCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return CashTransactionService.create(
         db,
@@ -63,6 +69,7 @@ def create_transaction(
 def delete_transaction(
     transaction_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_transaction = CashTransactionService.get_by_id(
         db,

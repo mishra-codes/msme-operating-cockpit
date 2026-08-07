@@ -9,6 +9,9 @@ from app.schemas.supplier import (
 )
 from app.services.supplier_service import SupplierService
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/suppliers",
     tags=["Suppliers"],
@@ -16,7 +19,10 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[SupplierResponse])
-def get_suppliers(db: Session = Depends(get_db)):
+def get_suppliers(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     return SupplierService.get_all(db)
 
 
@@ -24,6 +30,7 @@ def get_suppliers(db: Session = Depends(get_db)):
 def get_supplier(
     supplier_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     supplier = SupplierService.get_by_id(db, supplier_id)
 
@@ -46,6 +53,7 @@ def get_supplier(
 def create_supplier(
     supplier: SupplierCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return SupplierService.create(db, supplier)
 
@@ -55,6 +63,7 @@ def update_supplier(
     supplier_id: int,
     supplier: SupplierUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_supplier = SupplierService.get_by_id(db, supplier_id)
 
@@ -75,6 +84,7 @@ def update_supplier(
 def delete_supplier(
     supplier_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     db_supplier = SupplierService.get_by_id(db, supplier_id)
 
