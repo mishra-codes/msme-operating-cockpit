@@ -8,6 +8,7 @@ from app.models.customer import Customer
 from app.models.product import Product
 from app.models.sale import Sale
 from app.models.sale_item import SaleItem
+from app.models.stock_alert import StockAlert
 from app.models.user import User
 from app.schemas.sale import SaleCreate
 
@@ -110,6 +111,28 @@ class SaleService:
                 # Reduce stock
                 product.current_stock -= item.quantity
 
+                # Create low stock alert automatically
+                if product.current_stock <= product.reorder_point:
+
+                    existing_alert = (
+                        db.query(StockAlert)
+                        .filter(
+                            StockAlert.product_id == product.id,
+                            StockAlert.alert_type == "low_stock",
+                            StockAlert.resolved == False,
+                        )
+                        .first()
+                    )
+
+                    if existing_alert is None:
+                        db.add(
+                            StockAlert(
+                                product_id=product.id,
+                                alert_type="low_stock",
+                                resolved=False,
+                            )
+                        )
+
                 total_amount += line_total
 
             db_sale.total_amount = total_amount
@@ -133,8 +156,7 @@ class SaleService:
                 latest_entry = (
                     db.query(CreditLedger)
                     .filter(
-                        CreditLedger.customer_id
-                        == sale.customer_id
+                        CreditLedger.customer_id == sale.customer_id
                     )
                     .order_by(
                         CreditLedger.id.desc()
