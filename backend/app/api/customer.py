@@ -10,6 +10,7 @@ from app.schemas.customer import (
 from app.services.customer_service import CustomerService
 
 from app.core.security import get_current_user
+from app.core.security import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -47,7 +48,7 @@ def get_customer(
 def create_customer(
     customer: CustomerCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     return CustomerService.create(db, customer)
 
@@ -57,7 +58,7 @@ def update_customer(
     customer_id: int,
     customer: CustomerUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     db_customer = CustomerService.get_by_id(db, customer_id)
 
@@ -78,7 +79,7 @@ def update_customer(
 def delete_customer(
     customer_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner",)),
 ):
     db_customer = CustomerService.get_by_id(db, customer_id)
 

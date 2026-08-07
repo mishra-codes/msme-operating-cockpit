@@ -10,6 +10,7 @@ from app.schemas.cash_transaction import (
 from app.services.cash_transactions import CashTransactionService
 
 from app.core.security import get_current_user
+from app.core.security import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -57,7 +58,7 @@ def get_transaction(
 def create_transaction(
     transaction: CashTransactionCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner",)),
 ):
     return CashTransactionService.create(
         db,
@@ -69,7 +70,7 @@ def create_transaction(
 def delete_transaction(
     transaction_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner",)),
 ):
     db_transaction = CashTransactionService.get_by_id(
         db,

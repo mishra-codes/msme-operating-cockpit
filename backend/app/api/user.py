@@ -13,6 +13,7 @@ from app.schemas.user import (
     UserUpdate,
 )
 from app.services.user_service import UserService
+from app.core.security import require_roles
 
 router = APIRouter(
     prefix="/users",
@@ -23,7 +24,7 @@ router = APIRouter(
 @router.get("/", response_model=list[UserResponse])
 def get_users(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner")),
 ):
     return UserService.get_all_users(db)
 
@@ -32,7 +33,7 @@ def get_users(
 def get_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner")),
 ):
     user = UserService.get_user_by_id(
         db,
@@ -56,7 +57,7 @@ def get_user(
 def create_user(
     user: UserCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner")),
 ):
     existing_user = UserService.get_user_by_email(
         db,
@@ -84,7 +85,7 @@ def update_user(
     user_id: int,
     user: UserUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner")),
 ):
     db_user = UserService.get_user_by_id(
         db,
@@ -110,7 +111,7 @@ def update_user(
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner")),
 ):
     user = UserService.delete_user(
         db,

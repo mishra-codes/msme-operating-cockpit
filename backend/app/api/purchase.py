@@ -7,6 +7,7 @@ from app.services.purchase_service import PurchaseService
 
 
 from app.core.security import get_current_user
+from app.core.security import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -44,7 +45,7 @@ def get_purchase(
 def create_purchase(
     purchase: PurchaseCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     try:
         return PurchaseService.create(db, purchase)
@@ -60,7 +61,7 @@ def create_purchase(
 def delete_purchase(
     purchase_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner",)),
 ):
     purchase = PurchaseService.get_by_id(db, purchase_id)
 

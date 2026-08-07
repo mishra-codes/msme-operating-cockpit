@@ -9,6 +9,7 @@ from app.schemas.sale import (
 from app.services.sale_service import SaleService
 
 from app.core.security import get_current_user
+from app.core.security import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -49,7 +50,7 @@ def get_sale(
 def create_sale(
     sale: SaleCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager","employee")),
 ):
     try:
         return SaleService.create(
@@ -68,7 +69,7 @@ def create_sale(
 def delete_sale(
     sale_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner",)),
 ):
     db_sale = SaleService.get_by_id(
         db,

@@ -9,6 +9,7 @@ from app.schemas.stock_alert import (
 from app.services.stock_alert import StockAlertService
 
 from app.core.security import get_current_user
+from app.core.security import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -56,7 +57,7 @@ def get_alert(
 def create_alert(
     alert: StockAlertCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     try:
         return StockAlertService.create(
@@ -75,7 +76,7 @@ def create_alert(
 def delete_alert(
     alert_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner",)),
 ):
     db_alert = StockAlertService.get_by_id(
         db,

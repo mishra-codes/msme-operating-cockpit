@@ -10,6 +10,7 @@ from app.schemas.supplier import (
 from app.services.supplier_service import SupplierService
 
 from app.core.security import get_current_user
+from app.core.security import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -53,7 +54,7 @@ def get_supplier(
 def create_supplier(
     supplier: SupplierCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     return SupplierService.create(db, supplier)
 
@@ -63,7 +64,7 @@ def update_supplier(
     supplier_id: int,
     supplier: SupplierUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     db_supplier = SupplierService.get_by_id(db, supplier_id)
 
@@ -84,7 +85,7 @@ def update_supplier(
 def delete_supplier(
     supplier_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner",)),
 ):
     db_supplier = SupplierService.get_by_id(db, supplier_id)
 

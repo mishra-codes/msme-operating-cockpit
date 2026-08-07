@@ -8,6 +8,7 @@ from app.schemas.product import ProductCreate , ProductUpdate , ProductResponse
 from app.schemas.product import ProductResponse , ProductCreate , ProductUpdate
 
 from app.core.security import get_current_user
+from app.core.security import require_roles
 from app.models.user import User
 
 router = APIRouter(
@@ -42,7 +43,7 @@ def get_product(product_id: int,
 def create_product(
     product: ProductCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     # Check duplicate SKU
     if ProductService.get_by_sku(db, product.sku):
@@ -65,7 +66,7 @@ def update_product(
     product_id: int,
     product: ProductUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", "manager")),
 ):
     db_product = ProductService.get_by_id(db, product_id)
 
@@ -85,7 +86,7 @@ def update_product(
 def delete_product(
     product_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("owner", )),
 ):
     db_product = ProductService.get_by_id(db, product_id)
 
