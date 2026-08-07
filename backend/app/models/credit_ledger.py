@@ -43,4 +43,10 @@ class CreditLedger(Base):
         back_populates="credit_entries",
     )
 
-    sale = relationship("Sale")
+    sale = relationship(
+        "Sale"
+    )
+
+
+
+    

@@ -3,6 +3,7 @@ from decimal import Decimal
 from sqlalchemy.orm import Session
 
 from app.models.cash_transactions import CashTransaction
+from app.models.credit_ledger import CreditLedger
 from app.models.customer import Customer
 from app.models.product import Product
 from app.models.sale import Sale
@@ -31,6 +32,7 @@ class SaleService:
         sale: SaleCreate,
     ):
         try:
+
             # Validate customer (optional)
             if sale.customer_id is not None:
                 customer = (
@@ -51,6 +53,15 @@ class SaleService:
 
             if user is None:
                 raise ValueError("User not found")
+
+            # Credit sales require a customer
+            if (
+                sale.payment_mode.lower() == "credit"
+                and sale.customer_id is None
+            ):
+                raise ValueError(
+                    "Customer is required for credit sales"
+                )
 
             total_amount = Decimal("0.00")
 
@@ -82,7 +93,9 @@ class SaleService:
                         f"Insufficient stock for {product.name}"
                     )
 
-                line_total = item.quantity * item.unit_price
+                line_total = (
+                    item.quantity * item.unit_price
+                )
 
                 sale_item = SaleItem(
                     sale_id=db_sale.id,
@@ -101,8 +114,9 @@ class SaleService:
 
             db_sale.total_amount = total_amount
 
-            # Automatically create cash transaction
+            # Cash Sale
             if sale.payment_mode.lower() == "cash":
+
                 cash_transaction = CashTransaction(
                     txn_type="inflow",
                     source="sale",
@@ -112,6 +126,42 @@ class SaleService:
                 )
 
                 db.add(cash_transaction)
+
+            # Credit Sale
+            elif sale.payment_mode.lower() == "credit":
+
+                latest_entry = (
+                    db.query(CreditLedger)
+                    .filter(
+                        CreditLedger.customer_id
+                        == sale.customer_id
+                    )
+                    .order_by(
+                        CreditLedger.id.desc()
+                    )
+                    .first()
+                )
+
+                previous_balance = (
+                    latest_entry.balance_after
+                    if latest_entry
+                    else Decimal("0.00")
+                )
+
+                new_balance = (
+                    previous_balance
+                    + total_amount
+                )
+
+                credit_entry = CreditLedger(
+                    customer_id=sale.customer_id,
+                    sale_id=db_sale.id,
+                    entry_type="sale",
+                    amount=total_amount,
+                    balance_after=new_balance,
+                )
+
+                db.add(credit_entry)
 
             db.commit()
             db.refresh(db_sale)
