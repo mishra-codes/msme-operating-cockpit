@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.customer import Customer
 from app.schemas.customer import CustomerCreate, CustomerUpdate
-
+from fastapi import HTTPException
 
 class CustomerService:
 
@@ -48,9 +48,22 @@ class CustomerService:
         return db_customer
 
     @staticmethod
-    def delete(
-        db: Session,
-        db_customer: Customer,
-    ):
-        db.delete(db_customer)
+    def delete(db: Session, customer):
+        # Check for existing sales
+        if customer.sales:
+            raise HTTPException(
+                status_code=409,
+                detail="Customer cannot be deleted because they have existing sales."
+            )
+
+        # Check for existing credit ledger entries
+        if customer.credit_ledger:
+            raise HTTPException(
+                status_code=409,
+                detail="Customer cannot be deleted because they have existing credit records."
+            )
+
+        db.delete(customer)
         db.commit()
+
+        return customer
